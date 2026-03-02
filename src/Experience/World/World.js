@@ -31,5 +31,7 @@ export default class World
             this.fox.update()
         if(this.grass)
             this.grass.update()
+        if(this.styles)
+            this.styles.update()
     }
 }

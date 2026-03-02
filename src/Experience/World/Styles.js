@@ -22,14 +22,15 @@ export default class Styles
 
         this.subdivisions = 280
         this.count = this.subdivisions * this.subdivisions
-        this.size = 24 * 2
+        this.size = 32.83342127986207 * 2
         this.fragmentSize = this.size / this.subdivisions
-        this.bladeWidth = .2
-        this.bladeHeight = .4
+        this.bladeWidth = 0.13592378640684596
+        this.bladeHeight = 0.8155427184410758
 
         this.setGeometry()
         this.setMaterial()
         this.setGrass()
+        // this.setTestMesh()
     }
 
     /**
@@ -98,9 +99,18 @@ export default class Styles
             vertexShader: Vertex,
             fragmentShader: Fragment,
             uniforms: {
-                'uBladeWidth': new THREE.Uniform(this.bladeWidth),
-                'uBladeHeight': new THREE.Uniform(this.bladeHeight),
-
+                uBladeWidth: new THREE.Uniform(this.bladeWidth),
+                uBladeHeight: new THREE.Uniform(this.bladeHeight),
+                uBladeHeightRandomness: new THREE.Uniform(0.6),
+                uSize: new THREE.Uniform(this.size),
+                uPerlinTexture: new THREE.Uniform(this.perlinTexture),
+                uTime: new THREE.Uniform(0),
+                uWindDirection: new THREE.Uniform(new THREE.Vector2(-1, 1)),
+                uWindSpeed1: new THREE.Uniform(0.1),
+                uWindSpeed2: new THREE.Uniform(0.03),
+                uWindNoiseScale1: new THREE.Uniform(0.06),
+                uWindNoiseScale2: new THREE.Uniform(0.043),
+                uWindStrength: new THREE.Uniform(1.25),
             },
             // wireframe: true
         })
@@ -110,14 +120,24 @@ export default class Styles
     {
         this.grass = new THREE.Mesh(this.geometry, this.material)
         this.grass.rotation.x = Math.PI / 2
-        
+        this.grass.frustumCulled = false
         this.scene.add(this.grass)
+    }
+
+    setTestMesh()
+    {
+        this.testMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(280, 280)
+        )
+        this.testMesh.rotation.x = - Math.PI / 2
+        this.scene.add(this.testMesh)
+
     }
 
     update()
     {
         // time
-        // this.material.uniforms.uTime.value = this.time.elapsed
+        this.material.uniforms.uTime.value = this.time.elapsed
        
     }
 }
