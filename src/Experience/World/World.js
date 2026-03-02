@@ -3,6 +3,7 @@ import Environment from './Environment.js'
 import Floor from './Floor.js'
 import Fox from './Fox.js'
 import Grass from './Grass.js'
+import Styles from './Styles.js'
 
 export default class World
 {
@@ -18,7 +19,8 @@ export default class World
             // Setup
             // this.floor = new Floor()
             this.fox = new Fox()
-            this.grass = new Grass()
+            // this.grass = new Grass()
+            this.styles = new Styles()
             this.environment = new Environment()
         })
     }
