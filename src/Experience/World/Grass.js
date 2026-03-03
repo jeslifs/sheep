@@ -27,6 +27,19 @@ export default class Grass
         this.bladeWidth = 0.13592378640684596
         this.bladeHeight = 0.8155427184410758
 
+        // Debug
+        if(this.debug.active)
+        {
+            this.debugFolder = this.debug.ui.addFolder('Grass')
+            this.debugFolder.close()
+        }
+
+        this.parameters = {
+            // 'baseColor': '#BBC863', //94bf1d
+            'baseColor': '#94bf1d', //
+            // 'tipColor': '#F0E491', // fcff5c
+            'tipColor': '#fcff5c' // 
+        }
         this.setGeometry()
         this.setMaterial()
         this.setGrass()
@@ -130,6 +143,8 @@ export default class Grass
             uWindNoiseScale1: new THREE.Uniform(0.06),
             uWindNoiseScale2: new THREE.Uniform(0.043),
             uWindStrength: new THREE.Uniform(1.25),
+            uBaseColor: new THREE.Uniform(new THREE.Color(this.parameters.baseColor)),
+            uTipColor: new THREE.Uniform(new THREE.Color(this.parameters.tipColor)),
         }
 
         this.customMaterial = new Material(Vertex, Fragment, this.uniforms)
@@ -146,6 +161,68 @@ export default class Grass
         // this.grass.receiveShadow = true
         // this.grass.receiveShadow = true
         this.scene.add(this.grass)
+
+        if(this.debug.active)
+        {
+            
+            this.debugFolder
+            .add(this.material.uniforms.uWindDirection.value, 'x')
+            .min(-1)
+            .max(1)
+            .step(0.01)
+            .name('Wind Direction X')
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindDirection.value, 'y')
+            .min(-1)
+            .max(1)
+            .step(0.01)
+            .name('Wind Direction Y')
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindSpeed1, 'value')
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .name('Wind Speed 1')
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindSpeed2, 'value')
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .name('Wind Speed 2')
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindNoiseScale1, 'value')
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .name('Wind Noise Scale 1')
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindNoiseScale2, 'value')
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .name('Wind Noise Scale 2')
+
+
+            this.debugFolder
+            .add(this.material.uniforms.uWindStrength, 'value')
+            .min(0)
+            .max(5)
+            .step(0.01)
+            .name('Wind Strength')
+
+            this.debugFolder
+                .addColor(this.parameters, 'baseColor')
+                .onChange(() => {this.material.uniforms.uBaseColor.value.set(this.parameters.baseColor)})
+            
+            this.debugFolder
+                .addColor(this.parameters, 'tipColor')
+                .onChange(() => {this.material.uniforms.uTipColor.value.set(this.parameters.tipColor)})
+        }
     }
 
     setTestMesh()

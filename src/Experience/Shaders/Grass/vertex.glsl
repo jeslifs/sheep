@@ -12,6 +12,8 @@ uniform float uWindSpeed2;
 uniform float uWindNoiseScale1;
 uniform float uWindNoiseScale2;
 uniform float uWindStrength;
+uniform vec3 uBaseColor;
+uniform vec3 uTipColor;
 
 
 varying vec3 vColor;
@@ -102,13 +104,12 @@ void main()
 
     gl_Position = projectionPosition;
 
-    vec3 baseColor = vec3(0.2, 0.5, 0.3);
-
     // brighten toward tip
-    float tipLight = mix(0.1, 1.0, tip);
+    float tipLight = mix(0.3, 1.0, tip);
 
-    vec3 finalColor = baseColor * tipLight;
+    vec3 finalColor = mix(uBaseColor, uTipColor * tip, height);
     vColor = finalColor;
+
 
 
 
