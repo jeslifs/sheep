@@ -104,9 +104,6 @@ void main()
 
     gl_Position = projectionPosition;
 
-    // brighten toward tip
-    float tipLight = mix(0.3, 1.0, tip);
-
     vec3 finalColor = mix(uBaseColor, uTipColor * tip, height);
     vColor = finalColor;
 

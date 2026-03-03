@@ -13,16 +13,24 @@ export default class Environment
         // Debug
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.ui.addFolder('environment')
+            this.debugFolder = this.debug.ui.addFolder('Environment').close()
+            this.ambientFolder = this.debugFolder.addFolder('Ambient').close()
+            this.directionalLightFolder = this.debugFolder.addFolder('Directional').close()
+        }
+
+        this.parameters = {
+            'ambientColor': '#f6f03a',
+            'directionalLightColor': '#ffffff'
         }
 
         this.setSunLight()
+        this.setAmbient()
         this.setEnvironmentMap()
     }
 
     setSunLight()
     {
-        this.sunLight = new THREE.DirectionalLight('#ffffff', 1.149)
+        this.sunLight = new THREE.DirectionalLight(this.parameters.directionalLightColor, 1.149)
         this.sunLight.castShadow = true
         this.sunLight.shadow.camera.far = 15
         this.sunLight.shadow.mapSize.set(1024, 1024)
@@ -33,33 +41,59 @@ export default class Environment
         // Debug
         if(this.debug.active)
         {
-            this.debugFolder
+            this.directionalLightFolder
                 .add(this.sunLight, 'intensity')
                 .name('sunLightIntensity')
                 .min(0)
                 .max(10)
                 .step(0.001)
             
-            this.debugFolder
+            this.directionalLightFolder
                 .add(this.sunLight.position, 'x')
                 .name('sunLightX')
                 .min(- 5)
                 .max(5)
                 .step(0.001)
             
-            this.debugFolder
+            this.directionalLightFolder
                 .add(this.sunLight.position, 'y')
                 .name('sunLightY')
                 .min(- 5)
                 .max(5)
                 .step(0.001)
             
-            this.debugFolder
+            this.directionalLightFolder
                 .add(this.sunLight.position, 'z')
                 .name('sunLightZ')
                 .min(- 5)
                 .max(5)
                 .step(0.001)
+
+            this.directionalLightFolder
+                .addColor(this.parameters, 'directionalLightColor')
+                .onChange(() => {this.sunLight.color.set(this.parameters.directionalLightColor)})
+
+            }
+    }
+
+    setAmbient()
+    {
+        this.ambientLight = new THREE.AmbientLight(this.parameters.ambientColor, 0.003)
+        this.scene.add(this.ambientLight)
+
+        if(this.debug.active)
+        {
+
+            this.ambientFolder
+                .add(this.ambientLight, 'intensity')
+                .name('ambientIntensity')
+                .min(0)
+                .max(10)
+                .step(0.001)
+
+            this.ambientFolder
+                .addColor(this.parameters, 'ambientColor')
+                .onChange(() => {this.ambientLight.color.set(this.parameters.ambientColor)})
         }
     }
 
