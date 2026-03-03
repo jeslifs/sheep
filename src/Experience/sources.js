@@ -18,6 +18,11 @@ export default [
         path: 'models/Fox/glTF/Fox.gltf'
     },
     {
+        name: 'sheepModel',
+        type: 'gltfModel',
+        path: 'models/Sheep/Sheep.glb'
+    },
+    {
         name: 'perlinTexture',
         type: 'texture',
         path: 'textures/noise/perlin.png'

@@ -2,6 +2,7 @@ import Experience from '../Experience.js'
 import Environment from './Environment.js'
 import Fox from './Fox.js'
 import Grass from './Grass.js'
+import Sheep from './Sheep.js'
 
 export default class World
 {
@@ -16,6 +17,7 @@ export default class World
         {
             // Setup
             this.fox = new Fox()
+            this.sheep = new Sheep()
             this.grass = new Grass()
             this.environment = new Environment()
         })
