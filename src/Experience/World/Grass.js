@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import Experience from '../Experience'
+import Material from './Material'
 import Vertex from '../Shaders/Grass/vertex.glsl?raw'
 import Fragment from '../Shaders/Grass/fragment.glsl?raw'
-
 
 export default class Grass
 {
@@ -15,192 +15,147 @@ export default class Grass
         this.perlinTexture = this.resources.items.perlinTexture
         this.perlinTexture.wrapS = THREE.RepeatWrapping
         this.perlinTexture.wrapT = THREE.RepeatWrapping
-        // console.log(this.interactivePlaneTexture.displacement.texture)
         
         this.debug = this.experience.debug
 
         // setup
-        this.size = 24
-        this.plane = 280
-        this.count = this.plane * this.plane
-        this.fragmentSize = this.size / this.plane
-        this.bladeWidthRatio = 1.5
-        this.bladeHeightRatio = 4
-        this.positionRandomness = 0.5
-        this.bladeHeightRandomness = 0.5
 
-        // Debug
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.ui.addFolder('Grass')
-            this.debugFolder.close()
-        }
+        this.subdivisions = 280
+        this.count = this.subdivisions * this.subdivisions
+        this.size = 32.83342127986207 * 2
+        this.fragmentSize = this.size / this.subdivisions
+        this.bladeWidth = 0.13592378640684596
+        this.bladeHeight = 0.8155427184410758
 
         this.setGeometry()
         this.setMaterial()
         this.setGrass()
+        // this.setTestMesh()
     }
+
+    /**
+     * My Method
+     */
 
     setGeometry()
     {
-        // this.geometry = new THREE.PlaneGeometry(30, 30)
+        // this.geometry = new THREE.PlaneGeometry(280, 280)
 
-        // centers
-        const centers = new Float32Array(this.count * 3 * 2)
-
-        // positions
-        const positions = new Float32Array(this.count * 3 * 3)
+        // position array
+        const position = new Float32Array(this.count * 3 * 2)
+        const randomHeight = new Float32Array(this.count * 3)
 
         // grid
-        for(let x = 0; x < this.plane; x++)
+        for(let X = 0; X < this.subdivisions; X++)
         {
-            // center of each cell on x axis
-            const cellCenterX = (x / this.plane - 0.5) * this.size + this.fragmentSize * 0.5
-            for(let z = 0; z < this.plane; z++)
+            const normalizeX = (X / this.subdivisions - 0.5) * this.size + this.fragmentSize * 0.5
+
+            for(let Z = 0; Z < this.subdivisions; Z ++)
             {
-                // center of each cell on z axis
-                const cellCenterZ = (z / this.plane - 0.5) * this.size + this.fragmentSize * 0.5
+                const normalizeZ = (Z / this.subdivisions - 0.5) * this.size + this.fragmentSize * 0.5
 
-                // index's of positions and centers
-                const positionIndex = (x * this.plane + z) * 9
-                const centerIndex = (x * this.plane + z) * 6
+                // indexs 0 to how many are there
+                const i = (X * this.subdivisions + Z)
+                const i3 = i * 3 // height
+                const i6 = i * 6 // vertex x an z position
 
-                // randomness for each blade in the cell
-                const centerX = cellCenterX + (Math.random() - 0.5) * this.fragmentSize * this.positionRandomness
-                const centerZ = cellCenterZ + (Math.random() - 0.5) * this.fragmentSize * this.positionRandomness
+                // blade center
+                const positionX = normalizeX + (Math.random() - 0.5) * this.fragmentSize
+                const positionZ = normalizeZ + (Math.random() - 0.5) * this.fragmentSize
 
-                // Centers
-
-                // vertex 1
-                centers[centerIndex ] = centerX
-                centers[centerIndex + 1] = centerZ
-
-                // vertex 2
-                centers[centerIndex + 2] = centerX
-                centers[centerIndex + 3] = centerZ
-                
-                // vertex 3
-                centers[centerIndex + 4] = centerX
-                centers[centerIndex + 5] = centerZ
-
-                // Positions
-
-                const bladeWidth = this.fragmentSize * this.bladeWidthRatio
-                const bladeHalfWidth = bladeWidth * 0.5
-                
-                const bladeHeight = this.fragmentSize * this.bladeHeightRatio * (1 - 0.5 + Math.random() * 0.5)
+                // vertex 0
+                position[i6] = positionX
+                position[i6 + 1] = positionZ
 
                 // vertex 1
-                positions[positionIndex ] = - bladeHalfWidth
-                positions[positionIndex + 1] = 0
-                positions[positionIndex + 2] = 0
-
+                position[i6 + 2] = positionX
+                position[i6 + 3] = positionZ
+                
                 // vertex 2
-                positions[positionIndex + 3] = 0
-                positions[positionIndex + 4] = bladeHeight
-                positions[positionIndex + 5] = 0
+                position[i6 + 4] = positionX
+                position[i6 + 5] = positionZ
 
-                // vertex 3
-                positions[positionIndex + 6] = bladeHalfWidth
-                positions[positionIndex + 7] = 0
-                positions[positionIndex + 8] = 0
-
+                // height
+                randomHeight[i3] = Math.random()
+                randomHeight[i3 + 1] = Math.random()
+                randomHeight[i3 + 2] = Math.random()
             }
-
         }
-        
+
         this.geometry = new THREE.BufferGeometry()
-        this.geometry.setAttribute('center', new THREE.Float32BufferAttribute(centers, 2))
-        this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-        // console.log(this.geometry)
-        
+        this.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1)
+        this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(position, 2))
+        this.geometry.setAttribute('randomHeight', new THREE.Float32BufferAttribute(randomHeight, 1))
     }
 
     setMaterial()
     {
-        this.material = new THREE.ShaderMaterial({
-            // color: 'green',
+        // this.material = new THREE.MeshLambertMaterial({
+        //     // wireframe: true, 
+        //     color: 'yellow'
+        // })
+
+        // this.material = new THREE.ShaderMaterial({
+        //     vertexShader: Vertex,
+        //     fragmentShader: Fragment,
+        //     uniforms: {
+        //         uBladeWidth: new THREE.Uniform(this.bladeWidth),
+        //         uBladeHeight: new THREE.Uniform(this.bladeHeight),
+        //         uBladeHeightRandomness: new THREE.Uniform(0.6),
+        //         uSize: new THREE.Uniform(this.size),
+        //         uPerlinTexture: new THREE.Uniform(this.perlinTexture),
+        //         uTime: new THREE.Uniform(0),
+        //         uWindDirection: new THREE.Uniform(new THREE.Vector2(-1, 1)),
+        //         uWindSpeed1: new THREE.Uniform(0.1),
+        //         uWindSpeed2: new THREE.Uniform(0.03),
+        //         uWindNoiseScale1: new THREE.Uniform(0.06),
+        //         uWindNoiseScale2: new THREE.Uniform(0.043),
+        //         uWindStrength: new THREE.Uniform(1.25),
+        //     },
             // wireframe: true,
-            // side: THREE.DoubleSide,
-            vertexShader: Vertex,
-            fragmentShader: Fragment,
-            uniforms:
-            {
-                uGrassSize: new THREE.Uniform(this.size),
-                uPerlinTexture: new THREE.Uniform(this.perlinTexture),
-                uTime: new THREE.Uniform(0),
-                uWindDirection: new THREE.Uniform(new THREE.Vector2(-1, 1)),
-                uWindSpeed1: new THREE.Uniform(0.1),
-                uWindSpeed2: new THREE.Uniform(0.03),
-                uWindNoiseScale1: new THREE.Uniform(0.06),
-                uWindNoiseScale2: new THREE.Uniform(0.043),
-                uWindStrength: new THREE.Uniform(1.25),
-            }
-        })
+            // lights: true
+        // })
+        // this.material.lights = true
+
+        this.uniforms = {
+            uBladeWidth: new THREE.Uniform(this.bladeWidth),
+            uBladeHeight: new THREE.Uniform(this.bladeHeight),
+            uBladeHeightRandomness: new THREE.Uniform(0.6),
+            uSize: new THREE.Uniform(this.size),
+            uPerlinTexture: new THREE.Uniform(this.perlinTexture),
+            uTime: new THREE.Uniform(0),
+            uWindDirection: new THREE.Uniform(new THREE.Vector2(-1, 1)),
+            uWindSpeed1: new THREE.Uniform(0.1),
+            uWindSpeed2: new THREE.Uniform(0.03),
+            uWindNoiseScale1: new THREE.Uniform(0.06),
+            uWindNoiseScale2: new THREE.Uniform(0.043),
+            uWindStrength: new THREE.Uniform(1.25),
+        }
+
+        this.customMaterial = new Material(Vertex, Fragment, this.uniforms)
+        this.material = this.customMaterial.baseMaterial
+        // this.material.wireframe = true
     }
 
     setGrass()
     {
         this.grass = new THREE.Mesh(this.geometry, this.material)
+        this.grass.rotation.x = Math.PI / 2
         this.grass.frustumCulled = false
-
-        // this.grass.rotation.x = - Math.PI * 0.5
+        // this.grass.customDepthMaterial = this.customMaterial.depthMaterial
+        // this.grass.receiveShadow = true
+        // this.grass.receiveShadow = true
         this.scene.add(this.grass)
+    }
 
-        if(this.debug.active)
-        {
-            
-            this.debugFolder
-            .add(this.material.uniforms.uWindDirection.value, 'x')
-            .min(-1)
-            .max(1)
-            .step(0.01)
-            .name('Wind Direction X')
+    setTestMesh()
+    {
+        this.testMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(280, 280)
+        )
+        this.testMesh.rotation.x = - Math.PI / 2
+        this.scene.add(this.testMesh)
 
-            this.debugFolder
-            .add(this.material.uniforms.uWindDirection.value, 'y')
-            .min(-1)
-            .max(1)
-            .step(0.01)
-            .name('Wind Direction Y')
-
-            this.debugFolder
-            .add(this.material.uniforms.uWindSpeed1, 'value')
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .name('Wind Speed 1')
-
-            this.debugFolder
-            .add(this.material.uniforms.uWindSpeed2, 'value')
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .name('Wind Speed 2')
-
-            this.debugFolder
-            .add(this.material.uniforms.uWindNoiseScale1, 'value')
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .name('Wind Noise Scale 1')
-
-            this.debugFolder
-            .add(this.material.uniforms.uWindNoiseScale2, 'value')
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .name('Wind Noise Scale 2')
-
-
-            this.debugFolder
-            .add(this.material.uniforms.uWindStrength, 'value')
-            .min(0)
-            .max(5)
-            .step(0.01)
-            .name('Wind Strength')
-
-        }
     }
 
     update()

@@ -1,9 +1,7 @@
 import Experience from '../Experience.js'
 import Environment from './Environment.js'
-import Floor from './Floor.js'
 import Fox from './Fox.js'
 import Grass from './Grass.js'
-import Styles from './Styles.js'
 
 export default class World
 {
@@ -17,10 +15,8 @@ export default class World
         this.resources.on('ready', () =>
         {
             // Setup
-            // this.floor = new Floor()
             this.fox = new Fox()
-            // this.grass = new Grass()
-            this.styles = new Styles()
+            this.grass = new Grass()
             this.environment = new Environment()
         })
     }
@@ -31,7 +27,5 @@ export default class World
             this.fox.update()
         if(this.grass)
             this.grass.update()
-        if(this.styles)
-            this.styles.update()
     }
 }
