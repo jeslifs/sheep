@@ -1,4 +1,4 @@
-# Three.js Journey
+# My Sheep Farm
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
