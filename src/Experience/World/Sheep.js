@@ -31,13 +31,13 @@ export default class Sheep
         this.model.scale.set(.8, .8, .8)
         this.scene.add(this.model)
 
-        // this.model.traverse((child) =>
-        // {
-        //     if(child instanceof THREE.Mesh)
-        //     {
-        //         child.castShadow = true
-        //     }
-        // })
+        this.model.traverse((child) =>
+        {
+            if(child instanceof THREE.Mesh)
+            {
+                child.castShadow = true
+            }
+        })
     }
 
     update()

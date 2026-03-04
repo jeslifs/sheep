@@ -99,6 +99,7 @@ export default class Grass
         this.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1)
         this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(position, 2))
         this.geometry.setAttribute('randomHeight', new THREE.Float32BufferAttribute(randomHeight, 1))
+        this.geometry.computeVertexNormals()
     }
 
     setMaterial()
@@ -126,9 +127,7 @@ export default class Grass
         //         uWindStrength: new THREE.Uniform(1.25),
         //     },
             // wireframe: true,
-            // lights: true
         // })
-        // this.material.lights = true
 
         this.uniforms = {
             uBladeWidth: new THREE.Uniform(this.bladeWidth),
@@ -157,9 +156,9 @@ export default class Grass
         this.grass = new THREE.Mesh(this.geometry, this.material)
         this.grass.rotation.x = Math.PI / 2
         this.grass.frustumCulled = false
-        // this.grass.receiveShadow = true
+        this.grass.receiveShadow = true
         // this.grass.castShadow = true
-        // this.grass.customDepthMaterial = this.customMaterial.depthMaterial
+        this.grass.customDepthMaterial = this.customMaterial.depthMaterial
 
         this.scene.add(this.grass)
 

@@ -67,6 +67,7 @@ void main()
 
     vec3 localPosition = position + offset;
     csm_Position = position + offset;
+    csm_Normal = normalize(vec3(0.0, 0.0, -1.0));
     vec4 modelPosition = modelMatrix * vec4(localPosition, 1.0);
 
     // wind
