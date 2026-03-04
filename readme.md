@@ -1,6 +1,7 @@
 # My Sheep Farm
 
-<img width="1072" height="621" alt="image" src="https://github.com/user-attachments/assets/d6b68e24-5b56-4337-8715-690937733ec5" />
+<img width="1250" height="772" alt="image" src="https://github.com/user-attachments/assets/b5470644-3e87-46cb-88b9-e2816d6ac7dc" />
+
 
 🔥 **Live: [my-sheep-farm.vercel.app](https://my-sheep-farm.vercel.app/)**
 
