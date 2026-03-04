@@ -23,7 +23,7 @@ export default class Material
             vertexShader: Vertex,
             fragmentShader: Fragment,
             uniforms: uniforms,
-            side: THREE.DoubleSide
+            // side: THREE.DoubleSide
         })
     }
 
@@ -36,7 +36,7 @@ export default class Material
             vertexShader: Vertex,
             uniforms: uniforms,
             depthPacking: THREE.RGBADepthPacking,
-            side: THREE.DoubleSide
+            // side: THREE.DoubleSide
         })
     }
 }

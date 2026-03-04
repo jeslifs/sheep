@@ -157,9 +157,10 @@ export default class Grass
         this.grass = new THREE.Mesh(this.geometry, this.material)
         this.grass.rotation.x = Math.PI / 2
         this.grass.frustumCulled = false
+        // this.grass.receiveShadow = true
+        // this.grass.castShadow = true
         // this.grass.customDepthMaterial = this.customMaterial.depthMaterial
-        // this.grass.receiveShadow = true
-        // this.grass.receiveShadow = true
+
         this.scene.add(this.grass)
 
         if(this.debug.active)
